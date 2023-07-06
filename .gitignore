@@ -1,0 +1,4 @@
+data/doc/*.doc
+data/doc/*.docx
+data/text/*.txt
+output/*.xml
