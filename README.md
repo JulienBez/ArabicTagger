@@ -1,6 +1,6 @@
 # Disclaimer
 
-This project was created during the "CERES Hackathon" event. 
+This project was created during the "[CERES](https://ceres.sorbonne-universite.fr/) Hackathon" event. 
 
 # ArabicToTXM
 
@@ -22,7 +22,7 @@ The program contains two command lines. The first one retrieves the contents of 
 python main.py --docxToText
 ```
 
-The word files must be placed in the **data/doc/**. The text files resulting from this command are stored in **data/text/**.
+The word files must be placed in the **data/doc/**. The text files resulting from this command are stored in **data/text/**. If your corpus is already in text format, just place the text files in **data/text/** and ignore the first command.
 
 The second command line will tokenize each text file and apply POS tags for each token. The result is a xml file containing one word per line with its POS tags. The command is as follows : 
 
