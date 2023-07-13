@@ -8,7 +8,7 @@ from camel_tools.tokenizers.word import simple_word_tokenize
 
 def POStag():
     mled = MLEDisambiguator.pretrained()
-    tags_list = openJson("tags_list.json")
+    tags_list = openJson("scripts/tags_list.json")
 
     taggers = {}
     for tag in tags_list:

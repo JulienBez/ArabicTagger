@@ -17,7 +17,8 @@ def docxToText():
             new_text = []
             
             for l in text:
-                if any(char.isdigit() for char in l) and l[-1].isnumeric() == False:
+                if any(char.isdigit() for char in l) and l[-1].isnumeric() == False: 
+                    #pour chaque ligne contenant des chiffres qui ne sont pas des nums de chapitre
                     l = re.sub(r"\d*","",l)
                 new_text.append(l)
 
