@@ -1,6 +1,6 @@
 # Disclaimer
 
-This project was created during the "[CERES](https://ceres.sorbonne-universite.fr/) Hackathon" event. 
+This project was created during the "[CERES](https://ceres.sorbonne-universite.fr/) Hackathon" event with the participation of [Rimane Karam](https://www.orient-mediterranee.com/member/7215/).
 
 # ArabicToTXM
 
