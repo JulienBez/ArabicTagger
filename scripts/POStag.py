@@ -1,12 +1,34 @@
 import glob
 from tqdm import tqdm
 from .utils import *
+from xml.sax.saxutils import escape
+
+import re
+na = re.compile(r'"((na)|(None))"')
 
 from camel_tools.disambig.mle import MLEDisambiguator
 from camel_tools.tagger.default import DefaultTagger
 from camel_tools.tokenizers.word import simple_word_tokenize
 
+def checkMarkup(path):
+    "check for markup characters to replace to avoid errors in TXM"
+
+    with open(path,'r',encoding='utf-8') as f:
+        lines = f.readlines()
+
+    new_lines = []
+    for line in lines:
+        new_line = line.replace("=\">","=\"&gt;").replace("=\"<","=\"&lt;")
+        new_line = re.sub(na,'""',new_line)
+        new_lines.append(new_line)
+
+    with open(path, 'w') as g:
+        for new_line in new_lines:
+            g.write(f"{new_line}")
+
 def POStag():
+    "apply camel-tools POS tagging according to tags listed in tags_list.json"
+
     mled = MLEDisambiguator.pretrained()
     tags_list = openJson("scripts/tags_list.json")
 
@@ -53,3 +75,4 @@ def POStag():
                 for line in lines:
                     f.write(f"{line}\n")
 
+        

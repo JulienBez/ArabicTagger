@@ -1,5 +1,8 @@
 from scripts.docxToText import docxToText
 from scripts.POStag import POStag
+from scripts.POStag import checkMarkup
+
+checkMarkup("output/Baybars Volume 15.xml")
 
 def proceed(args):
 

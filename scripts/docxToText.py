@@ -5,6 +5,8 @@ from .utils import *
 from tqdm import tqdm
 
 def docxToText():
+    "convert docx to txt format"
+
     for path in tqdm(glob.glob("data/doc/*.docx")):
 
         new_path = path.replace("/doc/","/text/").replace(".docx",".txt")
@@ -25,3 +27,4 @@ def docxToText():
             new_path = path.replace("/doc/","/text/").replace(".docx",".txt")
             with open(new_path,'w',encoding='utf-8') as f:
                 f.write("\n".join(new_text))
+        
