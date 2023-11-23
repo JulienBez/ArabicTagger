@@ -42,4 +42,4 @@ The second command line will tokenize each text file and apply POS tags for each
 python main.py --POStag
 ```
 
-The applied POS tags list can be found in  **scripts/tags_list.json**. For more informations about the tags you can add to the list, please refer to [Camelira's online documentation](https://camel-tools.readthedocs.io/en/latest/api/tagger/default.html).
+The applied POS tags list can be found in  **scripts/tags_list.json**. For more informations about the tags you can add to the list, please refer to [Camelira's online documentation](https://camel-tools.readthedocs.io/en/latest/api/tagger/default.html) and [Camelira's tag list](https://camel-tools.readthedocs.io/en/v1.2.0/reference/camel_morphology_features.html). 
