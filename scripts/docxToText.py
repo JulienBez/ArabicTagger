@@ -1,8 +1,10 @@
 import re
 import glob
-from docxlatex import Document
-from .utils import *
 from tqdm import tqdm
+
+from .utils import *
+
+from docxlatex import Document
 
 def docxToText():
     "convert docx to txt format"
