@@ -4,17 +4,23 @@ This project was created during the **[CERES](https://ceres.sorbonne-universite.
 
 # ArabicToTXM
 
-The goal was to create a script that can convert an arabic corpus (.docx or .txt format) to a [TXM](https://txm.gitpages.huma-num.fr/textometrie/) compatible file  (.xml format). We use the work presented in [Camelira: An Arabic Multi-Dialect Morphological Disambiguator](https://aclanthology.org/2022.emnlp-demos.32/) (Ossama Obeid, Go Inoue, Nizar Habash, 2022) to apply multiple POS tags for each word of the corpus. 
+The goal was to create a script that can convert an arabic corpus (.doc, .docx or .txt format) to a [TXM](https://txm.gitpages.huma-num.fr/textometrie/) compatible file  (.xml format). We use the work presented in [Camelira: An Arabic Multi-Dialect Morphological Disambiguator](https://aclanthology.org/2022.emnlp-demos.32/) (Ossama Obeid, Go Inoue, Nizar Habash, 2022) to apply multiple POS tags for each word of the corpus. 
 
 # Installation
 
-To install ArabicToTXM, you must have  **Python 3.x** and  **pip** installed. You must first install some dependencies for Camel-Tools, which is the package used to apply multiple POS tags. Refer to [Camel-Tools](https://github.com/CAMeL-Lab/camel_tools) official documentation for more informations. Here is the command to install those dependencies (for Ubuntu/Debian):
+To install ArabicToTXM, you must have  **Python 3.x** and  **pip** installed. You must first install some dependencies for Camel-Tools, which is the package used to apply multiple POS tags. Refer to [Camel-Tools](https://github.com/CAMeL-Lab/camel_tools) official documentation for more informations. Here is the command to install those dependencies (for Ubuntu):
 
 ```
 sudo apt-get install cmake libboost-all-dev
 ```
 
-Then clone this repository on your computer. Open your terminal and go to the ArabicToTXM folder (where **main.py** is). Once in the indicated folder, install required packages with the following command:
+In case you want to convert .doc files, you must have LibreOffice installed:
+
+```
+sudo apt-get install libreoffice
+```
+
+ Once all the dependencies installed, clone this repository on your computer. Open your terminal and go to the ArabicToTXM folder (where **main.py** is). Once in the indicated folder, install required packages with the following command:
 
 ```
 pip install -r requirements.txt
@@ -28,7 +34,7 @@ camel_data -i light
 
 # How to use
 
-The program contains two command lines. The first one retrieves the contents of word files (.docx) and places them in text files (.txt), one for each word document to be processed. The command is as follows:
+The program contains two command lines. The first one retrieves the contents of word files (.doc and .docx) and places them in text files (.txt), one for each word document to be processed. The command is as follows:
 
 ```
 python main.py --docxToText

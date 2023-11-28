@@ -4,11 +4,21 @@ from tqdm import tqdm
 
 from .utils import *
 
+import os
+import subprocess
 from docxlatex import Document
+
+def docToDocx():
+    "convert doc to docx format"
+    for path in tqdm(glob.glob("data/doc/*.doc")):
+        subprocess.call(['soffice', '--headless', '--convert-to', 'docx', "--outdir", "data/doc/", path])
+        os.remove(path)
 
 def docxToText():
     "convert docx to txt format"
 
+    docToDocx()
+    
     for path in tqdm(glob.glob("data/doc/*.docx")):
 
         new_path = path.replace("/doc/","/text/").replace(".docx",".txt")
