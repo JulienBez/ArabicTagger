@@ -16,5 +16,6 @@
  "stt",
  "vox",
  "atbtok",
- "atbseg"
+ "atbseg",
+ "lex"
 ]
