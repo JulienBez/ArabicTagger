@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from xml.sax.saxutils import escape
+from xml.sax.saxutils import escape, quoteattr
 from io import StringIO
 
 from camel_tools.disambig.bert.unfactored import BERTUnfactoredDisambiguator
@@ -71,7 +71,7 @@ def POStag():
                 with StringIO() as s:
                     for jointure in liste:
                         s.write(f'<w ')
-                        s.write(' '.join(f'{k}="{escape(v)}"' if v is not None else f'{k}="{None}"' for k, v in jointure.items()))
+                        s.write(' '.join(f'{k}="{quoteattr(v)}"' if v is not None else f'{k}="{None}"' for k, v in jointure.items() if k != "word"))
                         s.write(f'>{escape(jointure["word"])}</w>\n')
                     f.write(s.getvalue())
                 f.write('</root>\n')
