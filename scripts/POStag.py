@@ -1,67 +1,85 @@
 import re
-import glob
+from io import StringIO
+from pathlib import Path
+from xml.sax.saxutils import escape, quoteattr
+
+from camel_tools.disambig.bert.unfactored import BERTUnfactoredDisambiguator
+from camel_tools.disambig.mle import MLEDisambiguator
+from camel_tools.tagger.default import DefaultTagger
+from camel_tools.tokenizers.word import simple_word_tokenize
 from tqdm import tqdm
 
 from .utils import *
 
-from camel_tools.tagger.default import DefaultTagger
-from camel_tools.disambig.mle import MLEDisambiguator
-from camel_tools.tokenizers.word import simple_word_tokenize
+markup = re.compile(r'="(na)|(None)"')
+
 
 def checkMarkup(lines):
-    "check for markup characters to replace to avoid errors in TXM"
+    """check for markup characters to replace to avoid errors in TXM"""
     new_lines = []
     for line in lines:
-        new_line = line.replace("=\">","=\"&gt;").replace("=\"<","=\"&lt;")
-        new_line = re.sub("=\"(na)|(None)\"","=\"",new_line)
+        new_line = line.replace("=\">", "=\"&gt;").replace("=\"<", "=\"&lt;")
+        new_line = markup.sub("=\"", new_line)
         new_lines.append(new_line)
     return new_lines
 
-def POStag():
-    "apply camel-tools POS tagging according to tags listed in tags_list.json"
 
-    mled = MLEDisambiguator.pretrained()
+def POStag(disambiguator="mled_msa"):
+    """apply camel-tools POS tagging according to tags listed in tags_list.json"""
+
+    disambiguators = {
+        "mled_msa": [MLEDisambiguator.pretrained, {"model_name": "calima-msa-r13"}],
+        "mled_egy": [MLEDisambiguator.pretrained, {"model_name": "calima-egy-r13"}],
+
+        "bert_msa": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "msa"}],
+        "bert_egy": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "egy"}],
+        "bert_glf": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "glf"}],
+    }
+
+    try:
+        mled = disambiguators[disambiguator]
+        mled = mled[0](**mled[1])
+    except KeyError:
+        raise ValueError(f"disambiguator must be one of {list(disambiguators.keys())}")
+
+
     tags_list = openJson("scripts/tags_list.json")
 
-    taggers = {}
-    for tag in tags_list:
-        if tag not in taggers:
-            taggers[tag] = DefaultTagger(mled, tag)
+    folder = Path("data/text")
+    output = Path("output")
 
-    for path in tqdm(glob.glob("data/text/*.txt")):
+    # taggers = {tag: DefaultTagger(mled, tag) for tag in tags_list}
 
-        new_path = path.replace("data/text/","output/").replace(".txt",".xml")
-        if isFile(new_path) == False:
+    for path in tqdm(list(folder.glob("*.txt"))):
+        new_path = output / path.with_suffix(".xml").name
+        new_path.parent.mkdir(parents=True, exist_ok=True)
 
-            with open(path,'r',encoding='utf-8') as f:
-                file = f.read()
-            
-            tokens = simple_word_tokenize(file) #split_digits
+        if new_path.exists():
+            print(f"{new_path} already exists, skipping")
+            continue
 
-            dic_tagged = {}
-            for k, v in tqdm(taggers.items()):
-                if k not in dic_tagged:
-                    dic_tagged[k] = v.tag(" ".join(tokens).split())
+        with path.open('r', encoding='utf-8') as f:
+            file = f.read()
 
-            liste = []
-            for i,tok in enumerate(tokens):
-                jointure = {"word":tok}
-                for k, v in dic_tagged.items():
-                    if k not in jointure:
-                        jointure[k] = v[i]
-                liste.append(jointure)
+        tokens = simple_word_tokenize(file)  # split_digits
 
-            lines = ["""<?xml version="1.0" encoding="utf-8"?>""","<root>"]
+        disambig = mled.disambiguate(tokens)
 
-            for jointure in liste:
-                line = "<w"
-                for k,v in jointure.items():
-                    if k != 'word':
-                        line = line + (f""" {k}="{v}" """)
-                line = line + "> " + jointure['word'].replace(">","&gt;").replace("<","&lt;") + " </w>"
-                lines.append(line)
-            lines.append("</root>")
+        liste = [
+            {"word": tok,
+             **{k: d.analyses[0].analysis[k] for k in tags_list if d.analyses and k in d.analyses[0].analysis}}
+            for i, (tok, d) in enumerate(zip(tokens, disambig))
+        ]
 
-            with open(new_path, 'w') as f:
-                for line in checkMarkup(lines):
-                    f.write(f"{line}\n")
+        with new_path.open('w') as f:
+            f.write('<?xml version="1.0" encoding="utf-8"?>\n')
+            f.write('<root>\n')
+            with StringIO() as s:
+                for jointure in liste:
+                    s.write(f'<w ')
+                    s.write(' '.join(
+                        f'{k}="{quoteattr(v)}"' if v is not None else f'{k}="{None}"' for k, v in jointure.items() if
+                        k != "word"))
+                    s.write(f'>{escape(jointure["word"])}</w>\n')
+                f.write(s.getvalue())
+            f.write('</root>\n')

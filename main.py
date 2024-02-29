@@ -1,25 +1,34 @@
-from scripts.docxToText import docxToText
+import argparse
+
 from scripts.POStag import POStag
+from scripts.docxToText import docxToText
 
-def proceed(args):
+parser = argparse.ArgumentParser()
 
-  if args.docxToText:
-    print("converting .docx to .txt ...")
-    docxToText()
-    print("done !")
+parser.add_argument("-t", "--docxToText", action="store_true", help="Convert .docx files to .txt")
+parser.add_argument("-p", "--POStag", action="store_true", help="Apply POS tags to every .txt files")
+parser.add_argument(
+    "-m", "--model", type=str, help="Choose a model to apply POS tags"
+    "\n mled_msa, mled_egy, bert_msa, bert_egy, bert_glf"
+    "\n default: mled_msa"
+)
 
-  if args.POStag:
-    print("Applying POS tags ...")
-    POStag()
-    print("done !")
+def proceed(docx, pos, model):
+    if docx:
+        print("converting .docx to .txt ...")
+        docxToText()
+        print("done !")
+
+    if pos:
+        print("Applying POS tags ...")
+        POStag(model)
+        print("done !")
+
 
 if __name__ == "__main__":
-	
-  import argparse
-  parser = argparse.ArgumentParser()
-
-  parser.add_argument("-t", "--docxToText", action="store_true", help="Convert .docx files to .txt")
-  parser.add_argument("-p","--POStag",action="store_true", help="Apply POS tags to every .txt files")
-
-  args = parser.parse_args()
-  proceed(args)
+    args = parser.parse_args()
+    proceed(
+        args.docxToText,
+        args.POStag,
+        args.model
+    )
