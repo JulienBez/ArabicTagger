@@ -37,7 +37,7 @@ class WebAnnoTransformer:
         elif not isinstance(soup, BeautifulSoup):
             raise ValueError(f"soup should be a `bs4.BeautifulSoup` or a `str`, not a {type(soup)}")
 
-        w_s = soup.find_all("w")[:100]
+        w_s = soup.find_all("w")
 
         # print(*w_s[50:100], sep="\n")
 
@@ -46,7 +46,7 @@ class WebAnnoTransformer:
         sentences = [
             [w.text for w in w_s[:points_index[i]]] if i == 0
             else [w.text for w in w_s[points_index[i-1]:points_index[i]]] if i != len(points_index)
-            else [w.text for w in w_s[points_index[i]:]]
+            else [w.text for w in w_s[points_index[i-1]:]]
             for i in range(len(points_index) + 1)
         ]
 
@@ -78,9 +78,12 @@ class WebAnnoTransformer:
 
 if __name__ == "__main__":
     file = Path("/home/marceau/PycharmProjects/ArabicToTXM/output/CorpusRimane/01.xml")
+    output = Path("/home/marceau/PycharmProjects/ArabicToTXM/output/CorpusKARAM/01.xml")
+    output.parent.mkdir(exist_ok=True, parents=True)
 
     wat = WebAnnoTransformer()
 
     wat_t = wat.transform(file.open().read())
 
-    print(wat_t)
+    with output.open("w") as f:
+        f.write(wat_t)
