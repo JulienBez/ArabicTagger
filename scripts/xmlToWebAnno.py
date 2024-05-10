@@ -1,7 +1,9 @@
 from pathlib import Path
 from typing import List, Set, Dict, Optional, Iterable
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
 from bs4 import BeautifulSoup
+from tqdm.auto import tqdm
 
 from webanno_tsv import Document, Annotation
 from dataclasses import replace
@@ -28,8 +30,8 @@ class WebAnnoTransformer:
 
             self.layers = set(fields_dict)
         else:
-            self.layer_defs = [("KARAMLayer", ["pos"]), ]
-            self.layers = {"KARAMLayer", }
+            self.layer_defs = [("webanno.custom.KARAMLayer", ["pos"]), ]
+            self.layers = {"webanno.custom.KARAMLayer", }
 
     def transform(self, soup: BeautifulSoup | str):
         if isinstance(soup, str):
@@ -44,9 +46,9 @@ class WebAnnoTransformer:
         points_index = [i for i, w in enumerate(w_s) if w.text.casefold().strip() in self.points]
 
         sentences = [
-            [w.text for w in w_s[:points_index[i]]] if i == 0
-            else [w.text for w in w_s[points_index[i-1]:points_index[i]]] if i != len(points_index)
-            else [w.text for w in w_s[points_index[i-1]:]]
+            [w.text.strip() for w in w_s[:points_index[i]]] if i == 0
+            else [w.text.strip() for w in w_s[points_index[i-1]:points_index[i]]] if i != len(points_index)
+            else [w.text.strip() for w in w_s[points_index[i-1]:]]
             for i in range(len(points_index) + 1)
         ]
 
@@ -61,10 +63,15 @@ class WebAnnoTransformer:
                         break
                 else:
                     continue
-
+                # print(i)
+                # print(w.text)
+                # print(doc.tokens[i:i+1])
+                # print(attr_field)
+                # print(attr_value)
+                # 1/0
                 annotations.append(
                     Annotation(
-                        tokens=doc.tokens[i:i],
+                        tokens=doc.tokens[i:i+1],
                         layer=layer,
                         field=attr_field,
                         label=attr_value,
@@ -74,16 +81,53 @@ class WebAnnoTransformer:
         doc = replace(doc, annotations=annotations, layer_defs=self.layer_defs)
         return doc.tsv()
 
+    def transform_file(self, file: Path | str):
+        if isinstance(file, str):
+            file = Path(file)
+        elif not isinstance(file, Path):
+            raise ValueError(f"file should be a `pathlib.Path` or a `str`, not a {type(file)}")
+
+        with file.open(mode="r", encoding="utf-8") as f:
+            return self.transform(f.read())
+
+    def transform_folder(self, folder: Path | str):
+        if isinstance(folder, str):
+            folder = Path(folder)
+        elif not isinstance(folder, Path):
+            raise ValueError(f"folder should be a `pathlib.Path` or a `str`, not a {type(folder)}")
+
+        # for file in folder.glob("*.xml"):
+        #     yield self.transform_file(file)
+        with ProcessPoolExecutor() as executor:
+            return executor.map(self.transform_file, folder.glob("*.xml"))
+
+    def transform_folder_to_tsv(self, folder: Path | str, output_folder: Path | str):
+        if isinstance(folder, str):
+            folder = Path(folder)
+        elif not isinstance(folder, Path):
+            raise ValueError(f"folder should be a `pathlib.Path` or a `str`, not a {type(folder)}")
+
+        if isinstance(output_folder, str):
+            output_folder = Path(output_folder)
+        elif not isinstance(output_folder, Path):
+            raise ValueError(f"output_folder should be a `pathlib.Path` or a `str`, not a {type(output_folder)}")
+
+        output_folder.mkdir(exist_ok=True, parents=True)
+
+        with ProcessPoolExecutor() as executor:
+            xmls = list(folder.glob("*.xml"))
+            tsvs = tqdm(executor.map(self.transform_file, xmls), total=len(xmls))
+            for tsv, xml in zip(tsvs, xmls):
+                with (output_folder / xml.with_suffix(".tsv").name).open("w") as f:
+                    f.write(tsv)
 
 
 if __name__ == "__main__":
-    file = Path("/home/marceau/PycharmProjects/ArabicToTXM/output/CorpusRimane/01.xml")
-    output = Path("/home/marceau/PycharmProjects/ArabicToTXM/output/CorpusKARAM/01.xml")
+    file = Path("/home/marceau/PycharmProjects/ArabicToTXM/output/CorpusRimane/")
+    output = Path("/home/marceau/PycharmProjects/ArabicToTXM/output/CorpusKARAM/")
     output.parent.mkdir(exist_ok=True, parents=True)
 
     wat = WebAnnoTransformer()
 
-    wat_t = wat.transform(file.open().read())
+    wat.transform_folder_to_tsv(file, output)
 
-    with output.open("w") as f:
-        f.write(wat_t)
