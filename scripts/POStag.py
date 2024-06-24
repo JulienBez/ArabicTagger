@@ -34,6 +34,7 @@ def POStag(disambiguator="mled_msa"):
         "bert_msa": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "msa"}],
         "bert_egy": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "egy"}],
         "bert_glf": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "glf"}],
+        # "bert_lev": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "lev"}],
     }
 
     try:
