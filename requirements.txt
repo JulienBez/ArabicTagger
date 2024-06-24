@@ -8,4 +8,5 @@ camel-tools
 
 ## To convert from xml to WebAnno (Inception format)
 beautifulsoup4~=4.12.3
+lxml
 webanno_tsv @git+https://github.com/neuged/webanno_tsv
