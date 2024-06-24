@@ -123,8 +123,8 @@ class WebAnnoTransformer:
 
 
 if __name__ == "__main__":
-    file = Path("/home/marceau/PycharmProjects/ArabicToTXM/output/CorpusRimane/")
-    output = Path("/home/marceau/PycharmProjects/ArabicToTXM/output/CorpusKARAM/")
+    file = Path("/home/marceau/PycharmProjects/ArabicToTXM/output/CorpusKARAMED/")
+    output = Path("/home/marceau/PycharmProjects/ArabicToTXM/output/CorpusKARAMED_WA/")
     output.parent.mkdir(exist_ok=True, parents=True)
 
     wat = WebAnnoTransformer()
