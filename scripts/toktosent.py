@@ -16,7 +16,7 @@ for csv in tqdm(list(input.glob("*.csv"))):
     for i, row in df.iterrows():
         sent.append(row.word.strip())
         pos.append(row.pos)
-        if row.word.strip() in "!؟.!?" and sent and sent[-1] not in "!؟.!?":
+        if row.word.strip() in "!؟.!?" and sent and (len(sent) < 2 or sent[-2] not in "!؟.!?"):
             sents.append((" ".join(sent), " ".join(pos)))
             sent = []
             pos = []
