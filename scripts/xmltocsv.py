@@ -32,5 +32,5 @@ for xml in tqdm(list(file.glob("*.xml"))):
 
     df.to_csv(output / xml.with_suffix(".csv").name, index=False)
 
-    print(f"{xml} converted to {output / xml.with_suffix('.csv').name}")
+    tqdm.write(f"{xml} converted to {output / xml.with_suffix('.csv').name}")
 
