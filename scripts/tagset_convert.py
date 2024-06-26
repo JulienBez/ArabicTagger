@@ -17,7 +17,7 @@ tagset = [[e[0].strip(), e[1].strip()] for e in [e.split("=", 1) for e in tagset
 tagset = {e[0]: e[1] for e in tagset}
 
 def replace(tag):
-    return tagset.get(tag, tag)
+    return tagset.get(tag.upper(), tagset.get(tag, tag.upper()))
 
 for xml in tqdm(list(file.glob("*.xml"))):
     with xml.open("r", encoding="utf-8") as f:
