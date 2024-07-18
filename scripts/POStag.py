@@ -9,7 +9,7 @@ from camel_tools.tagger.default import DefaultTagger
 from camel_tools.tokenizers.word import simple_word_tokenize
 from tqdm import tqdm
 
-from .utils import *
+from scripts.utils import *
 
 markup = re.compile(r'="(na)|(None)"')
 
@@ -24,8 +24,11 @@ def checkMarkup(lines):
     return new_lines
 
 
-def POStag(disambiguator="mled_msa"):
+def POStag(disambiguator=None):
     """apply camel-tools POS tagging according to tags listed in tags_list.json"""
+
+    if disambiguator is None:
+        disambiguator = "mled_msa"
 
     disambiguators = {
         "mled_msa": [MLEDisambiguator.pretrained, {"model_name": "calima-msa-r13"}],
@@ -34,7 +37,7 @@ def POStag(disambiguator="mled_msa"):
         "bert_msa": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "msa"}],
         "bert_egy": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "egy"}],
         "bert_glf": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "glf"}],
-        # "bert_lev": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "lev"}],
+        "bert_lev": [BERTUnfactoredDisambiguator.pretrained, {"model_name": "lev"}],
     }
 
     try:
@@ -47,7 +50,7 @@ def POStag(disambiguator="mled_msa"):
     tags_list = openJson("scripts/tags_list.json")
 
     folder = Path("data/text")
-    output = Path("output")
+    output = Path("output/POStagged")
 
     # taggers = {tag: DefaultTagger(mled, tag) for tag in tags_list}
 
@@ -79,7 +82,7 @@ def POStag(disambiguator="mled_msa"):
                 for jointure in liste:
                     s.write(f'<w ')
                     s.write(' '.join(
-                        f'{k}="{quoteattr(v)}"' if v is not None else f'{k}="{None}"' for k, v in jointure.items() if
+                        f'{k}={quoteattr(v)}' if v is not None else f'{k}="{None}"' for k, v in jointure.items() if
                         k != "word"))
                     s.write(f'>{escape(jointure["word"])}</w>\n')
                 f.write(s.getvalue())
