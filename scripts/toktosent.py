@@ -13,13 +13,15 @@ for csv in tqdm(list(input.glob("*.csv"))):
     sents = []
     sent = []
     pos = []
+    prev = None
     for i, row in df.iterrows():
-        sent.append(row.word.strip())
-        pos.append(row.pos.replace(" ", "_"))
-        if row.word.strip() in "!؟.!?" and sent and (len(sent) < 2 or sent[-2] not in "!؟.!?"):
+        if len(sent) > 1 and row.word.strip() not in "!؟.!?" and prev in "!؟.!?":
             sents.append((" ".join(sent), " ".join(pos)))
             sent = []
             pos = []
+        sent.append(row.word.strip())
+        pos.append(row.pos.replace(" ", "_"))
+        prev = row.word.strip()
 
     if sent:
         sents.append((" ".join(sent), " ".join(pos)))
