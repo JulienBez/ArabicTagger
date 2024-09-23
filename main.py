@@ -1,9 +1,10 @@
 import argparse
 
 from scripts.POStag import POStag
-from scripts.docxToText import docxToText
+from scripts.docxToText import *
 
 parser = argparse.ArgumentParser()
+
 
 parser.add_argument("-t", "--docxToText", action="store_true", help="Convert .docx files to .txt")
 parser.add_argument("-p", "--POStag", action="store_true", help="Apply POS tags to every .txt files")
@@ -16,6 +17,7 @@ parser.add_argument(
 def proceed(docx, pos, model):
     if docx:
         print("converting .docx to .txt ...")
+        docToDocx()
         docxToText()
         print("done !")
 
