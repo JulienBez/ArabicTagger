@@ -1,8 +1,6 @@
 # ArabicToTXM
 
-This project was created during the **[CERES](https://ceres.sorbonne-universite.fr/) Hackathon** event with the participation of [Rimane Karam](https://www.orient-mediterranee.com/member/7215/).
-
-The goal was to create a script that can convert an arabic corpus (.doc, .docx or .txt format) to a [TXM](https://txm.gitpages.huma-num.fr/textometrie/) compatible file  (**.xml** format). We use the work presented in [Camelira: An Arabic Multi-Dialect Morphological Disambiguator](https://aclanthology.org/2022.emnlp-demos.32/) (Ossama Obeid, Go Inoue, Nizar Habash, 2022) to apply multiple POS tags for each word of the corpus. 
+This project was created during the **[CERES](https://ceres.sorbonne-universite.fr/) Hackathon** event with the participation of [Rimane Karam](https://www.orient-mediterranee.com/member/7215/) and [Marceau Hernandez](https://ceres.sorbonne-universite.fr/1c808d15-d54d-47cd-b831-7f5550f13483). The goal was to apply POS tags to an arabic corpus. We use the work presented in [Camelira: An Arabic Multi-Dialect Morphological Disambiguator](https://aclanthology.org/2022.emnlp-demos.32/) (Ossama Obeid, Go Inoue, Nizar Habash, 2022) to apply multiple POS tags for each word of the corpus. 
 
 ## Installation
 
@@ -10,40 +8,27 @@ To install ArabicToTXM, you must have  **Python 3.x** and  **pip** installed. Yo
 
 ```
 sudo apt-get install cmake libboost-all-dev
+camel_data -i light
 ```
 
-In case you want to convert **.doc** files, you must have LibreOffice installed:
-
-```
-sudo apt-get install libreoffice
-```
-
- Once all the dependencies installed, clone this repository on your computer. Open your terminal and go to the ArabicToTXM folder (where **main.py** is). Once in the indicated folder, install required packages with the following command:
+Once all the dependencies installed, clone this repository on your computer. Open your terminal and go to the ArabicToTXM folder (where **main.py** is). Once in the indicated folder, install required packages with the following command:
 
 ```
 pip install -r requirements.txt
 ```
 
-Next execute this command to install Camel data:
-
-```
-camel_data -i light
-```
-
 ## How to use
 
-The program contains two command lines. The first one retrieves the contents of word files (**.doc** and **.docx**) and places them in text files (**.txt**), one for each word document to be processed. The command is as follows:
+This script takes raw text files (.txt) as input. It will tokenize each file and apply POS tags for each token in them. The result is a **.xml** file in **output/tagged** containing one word per line with its POS tags. This file is compatible with [TXM](https://txm.gitpages.huma-num.fr/textometrie/). The command is as follows: 
 
 ```
-python main.py --docxToText
+python main.py --tag --model [MODEL_NAME]
 ```
 
-The word files must be placed in the **data/doc/**. The text files resulting from this command are stored in **data/text/**. If your corpus is already in text format, just place the text files in **data/text/** and ignore the first command.
-
-The second command line will tokenize each text file and apply POS tags for each token. The result is a **.xml** file containing one word per line with its POS tags. The command is as follows: 
+The applied POS tags list can be found in  **src/tags_list.json**. For more informations about the tags you can add to the list, please refer to [Camelira's online documentation](https://camel-tools.readthedocs.io/en/latest/api/tagger/default.html) and [Camelira's tag list](https://camel-tools.readthedocs.io/en/v1.2.0/reference/camel_morphology_features.html). If you want to segment your corpus in sentences, you can use the following command:
 
 ```
-python main.py --POStag
+python main.py --sentence
 ```
 
-The applied POS tags list can be found in  **scripts/tags_list.json**. For more informations about the tags you can add to the list, please refer to [Camelira's online documentation](https://camel-tools.readthedocs.io/en/latest/api/tagger/default.html) and [Camelira's tag list](https://camel-tools.readthedocs.io/en/v1.2.0/reference/camel_morphology_features.html). 
+It will create a **.csv** file in **output/sentence** containing three columns: **sentence** (raw sentence), **tags** (POS tagsof each word in this sentence) and **lem** (canonical form of each word in this sentence).

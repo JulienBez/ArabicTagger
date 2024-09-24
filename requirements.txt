@@ -1,12 +1,3 @@
 tqdm~=4.66.1
-
-## To convert from docx to txt
-docxlatex~=0.1.6
-
-## to annotate in arabic
 camel-tools
-
-## To convert from xml to WebAnno (Inception format)
 beautifulsoup4~=4.12.3
-lxml
-webanno_tsv @git+https://github.com/neuged/webanno_tsv
