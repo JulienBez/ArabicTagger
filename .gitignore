@@ -1,4 +1,13 @@
-data/doc/*.doc
-data/doc/*.docx
-data/text/*.txt
-output/*.xml
+data/*.txt
+data/backup/*.txt
+output/tagged/*.xml
+output/tagged/backup/*.xml
+output/sentences/csv/*.csv
+output/sentences/csv/backup/*.csv
+output/sentences/json/*.json
+output/sentences/json/backup/*.json
+
+!data/seeds_rimane.txt
+!output/tagged/seeds_rimane.xml
+!output/sentences/csv/seeds_rimane.csv
+!output/sentences/json/seeds_rimane.json

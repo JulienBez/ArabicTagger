@@ -13,6 +13,12 @@ def openJson(path):
     return data
 
 
+def writeJson(path,data):
+  "create a json file"
+  with open(path,"w",encoding='utf-8') as f:
+    json.dump(data,f,indent=4,ensure_ascii=False)
+
+
 def createFolders(path):
   "create several folders"
   if not os.path.exists(path):
