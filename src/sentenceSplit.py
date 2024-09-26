@@ -16,6 +16,7 @@ def sentenceSplit(format="csv"):
     createFolders(output)
 
     for xml_file in tqdm(list(folder.glob("*.xml"))):
+        
         tree = ET.parse(xml_file)
         root = tree.getroot()
 
