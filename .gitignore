@@ -1,6 +1,7 @@
 *.txt
 *.json
 *.csv
+*.xml
 
-!src/tag_list.json
+!src/tags_list.json
 !requirements.txt
