@@ -1,13 +1,6 @@
-data/*.txt
-data/backup/*.txt
-output/tagged/*.xml
-output/tagged/backup/*.xml
-output/sentences/csv/*.csv
-output/sentences/csv/backup/*.csv
-output/sentences/json/*.json
-output/sentences/json/backup/*.json
+*.txt
+*.json
+*.csv
 
-!data/seeds_rimane.txt
-!output/tagged/seeds_rimane.xml
-!output/sentences/csv/seeds_rimane.csv
-!output/sentences/json/seeds_rimane.json
+!src/tag_list.json
+!requirements.txt
