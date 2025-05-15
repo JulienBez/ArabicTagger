@@ -1,8 +1,10 @@
 
 import time
 import argparse
+from src.toASMR import *
 from src.POStag import *
 from src.sentenceSplit import *
+#run : sudo apt-get install cmake libboost-all-dev
 
 def proceed(args):
 
@@ -15,6 +17,9 @@ def proceed(args):
     if args.sentence:
         print("splitting the text in sentences ...")
         sentenceSplit(format=args.file)
+
+    if args.asmr:
+        toASMR()
 
     end = time.time()
     print(f"executed in {round(end - start,2)}")
@@ -36,6 +41,8 @@ if __name__ == "__main__":
                         "\n csv, json"
                         "\n default: csv"
                         )
+    
+    parser.add_argument("-a","--asmr",action="store_true", help="Convert .json output files to asmr-ready files.")
 
     args = parser.parse_args()
     proceed(args)
